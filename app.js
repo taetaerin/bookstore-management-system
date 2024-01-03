@@ -18,4 +18,7 @@ app.use('/likes', likeRouter);
 const orderRouter = require('./routes/orders');
 app.use('/orders', orderRouter);
 
+const categoryRouter = require('./routes/category');
+app.use('/category', categoryRouter);
+
 app.listen(process.env.PORT);
