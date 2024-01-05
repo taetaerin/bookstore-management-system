@@ -64,6 +64,37 @@ VALUES ('대화력의 비밀', 49, 5,'ebook', 12, '말 잘하는 사람은 무�
 SELECT * FROM books left 
 join category on books.category_id = category.id
 
-
 SELECT * FROM books left 
 join category on books.category_id = category.id where books.id=1
+
+INSERT INTO likes (user_id, liked_book_id) VALUES (1 , 1);
+
+INSERT INTO likes (user_id, liked_book_id) VALUES (1 , 2);
+INSERT INTO likes (user_id, liked_book_id) VALUES (1 , 3);
+INSERT INTO likes (user_id, liked_book_id) VALUES (3 , 1);
+INSERT INTO likes (user_id, liked_book_id) VALUES (4 , 4);
+INSERT INTO likes (user_id, liked_book_id) VALUES (2 , 1);
+INSERT INTO likes (user_id, liked_book_id) VALUES (2 , 6);
+INSERT INTO likes (user_id, liked_book_id) VALUES (2 , 7);
+
+
+DELETE FROM likes WHERE user_id = 1 AND liked_book_id = 3;
+
+SELECT count(*) FROM likes WHERE liked_book_id=2
+SELECT *, (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes FROM books;
+
+SELECT EXISTS (SELECT * FROM likes WHERE user_id=1 AND liked_book_id=1)
+
+select *,
+	(SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
+	(select EXISTS (select * from likes where user_id=1 and liked_book_id=1)) AS liked 
+    from books where books.id=1
+
+
+SELECT *,
+    (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
+    (SELECT EXISTS (SELECT * FROM likes WHERE user_id=1 AND liked_book_id=1)) AS liked 
+    FROM books 
+    LEFT JOIN category 
+    ON books.category_id = category.id 
+    WHERE books.id=1
