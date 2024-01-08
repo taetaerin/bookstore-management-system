@@ -98,3 +98,6 @@ SELECT *,
     LEFT JOIN category 
     ON books.category_id = category.id 
     WHERE books.id=1
+
+//장바구니 담기
+INSERT INTO cartItems (book_id, quantity, user_id) VALUES(1, 1, 1);
