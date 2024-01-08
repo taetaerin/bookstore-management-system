@@ -101,3 +101,9 @@ SELECT *,
 
 //장바구니 담기
 INSERT INTO cartItems (book_id, quantity, user_id) VALUES(1, 1, 1);
+
+//장바구니 아이템 삭제
+DELETE FROM cartItems WHERE id = ?;
+
+//장바구니에서 선택한(장바구니 id) 아이템 목록 조회
+SELECT * FROM Library.cartItems WHERE user_id = 1 AND cartItems.id IN (1, 3);
