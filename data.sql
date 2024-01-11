@@ -30,8 +30,6 @@ INSERT INTO books (title, img, category_id, form, isbn, summary, detail, author,
 VALUES ('11문자 살인사건', 14, 1,'ebook', 6, '애인의 살인범을 쫓는 여성 추리소설 작가가 진실에 다가갈수록 그녀가 만나는 사람도 하나둘씩 살해당한다. ', '누가 편지를 보냈는지에서부터 범인이 누구이고, 어떤 트릭이 사용되었는지 주인공과 함께 추리 대결을 펼치게 된다. ',
 '히가시노 게이고', 405, '목차', 23000, '2024-01-05');
 
-
-
 //인문
 INSERT INTO books (title, img, category_id, form, isbn, summary, detail, author, pages, contents, price, pub_date)
 VALUES ('우리 인생에 바람을 초대하려면', 32, 2,'종이책', 7, '우리의 식생활과 베이커리 시장의 판도에 큰 변화가 발생한 이야기', '유럽 빵 문화의 대표 격이라 할 프랑스와 우리나라의 베이커리 시장의 트랜드 변화를 간단히 비교해보자',
@@ -44,7 +42,6 @@ VALUES ('꽃말의 탄생', 33, 2,'ebook', 8, '많은 이들에게 사랑받는 
 INSERT INTO books (title, img, category_id, form, isbn, summary, detail, author, pages, contents, price, pub_date)
 VALUES ('서사의 위기', 34, 2,'종이책', 9, '피로사회 이후 10여 년 만에 새로운 화두를 던지는 이 책의 핵심 키워드는 서사와 스토리다', '한국 사회를 뜨겁게 달궜던 재독 철학자 한병철이, 이번에는 빠르게 나타났다 사라지는 이슈만 좇느라 정작 자기의 생각으로부터 멀어져 버린 스토리 중독 사회를 고발한다.',
 '한병철', 182, '목차', 12000, '2024-01-12');
-
 
 //건강
 INSERT INTO books (title, img, category_id, form, isbn, summary, detail, author, pages, contents, price, pub_date)
@@ -61,14 +58,14 @@ INSERT INTO books (title, img, category_id, form, isbn, summary, detail, author,
 VALUES ('대화력의 비밀', 49, 5,'ebook', 12, '말 잘하는 사람은 무엇이 다를까? 당신의 말버릇을 점검해 보라!', '관점이 다른 사람을 내 편으로 만들고, 문제를 해결하는 방법을 찾고, 내면의 잠재력을 끌어내는 언어의 기술을 ‘대화’에 적용할 수 있도록 예를 들어가며 설명한다. ',
 '김지영', 182, '목차', 12000, '2024-01-12');
 
-SELECT * FROM books left 
-join category on books.category_id = category.id
+//카테고리, 도서 조인
+SELECT * FROM books left join category on books.category_id = category.id
 
-SELECT * FROM books left 
-join category on books.category_id = category.id where books.id=1
 
+SELECT * FROM books left join category on books.category_id = category.id where books.id=1
+
+//좋아요 삽입
 INSERT INTO likes (user_id, liked_book_id) VALUES (1 , 1);
-
 INSERT INTO likes (user_id, liked_book_id) VALUES (1 , 2);
 INSERT INTO likes (user_id, liked_book_id) VALUES (1 , 3);
 INSERT INTO likes (user_id, liked_book_id) VALUES (3 , 1);
@@ -77,14 +74,16 @@ INSERT INTO likes (user_id, liked_book_id) VALUES (2 , 1);
 INSERT INTO likes (user_id, liked_book_id) VALUES (2 , 6);
 INSERT INTO likes (user_id, liked_book_id) VALUES (2 , 7);
 
-
+//좋아요 삭제
 DELETE FROM likes WHERE user_id = 1 AND liked_book_id = 3;
 
+//해당 도서의 좋아요 수
 SELECT count(*) FROM likes WHERE liked_book_id=2
-SELECT *, (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes FROM books;
 
+SELECT *, (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes FROM books;
 SELECT EXISTS (SELECT * FROM likes WHERE user_id=1 AND liked_book_id=1)
 
+//해당 도서의 좋아요 수와 사용자의 좋아요 여부
 select *,
 	(SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
 	(select EXISTS (select * from likes where user_id=1 and liked_book_id=1)) AS liked 
@@ -107,3 +106,23 @@ DELETE FROM cartItems WHERE id = ?;
 
 //장바구니에서 선택한(장바구니 id) 아이템 목록 조회
 SELECT * FROM Library.cartItems WHERE user_id = 1 AND cartItems.id IN (1, 3);
+
+//주문하기 - 배송정보 입력
+INSERT INTO delivery (address, receiver, contact) VALUES ('서울시 서대문구', '김태린', '010-1234-5678')
+
+//주문정보 입력
+const delivery_id = SELECT max(id) FROM delivery
+INSERT INTO orders (book_title, total_quantity, total_price, user_id, delivery_id) 
+VALUES ('어린왕자', 3, 58000, 1, delivery_id)
+
+
+const order_id = SELECT max(id) FROM orders
+INSERT INTO orderedBook (order_id, book_id, quantity)
+VALUES (order_id, 1, 1);
+
+insert into orderedBook (order_id, book_id, quantity)
+values (order_id, 2, 2);
+
+
+//결재된 도서 장바구니 삭제
+DELETE FROM cartItems WHERE id IN (1, 2, 3);
