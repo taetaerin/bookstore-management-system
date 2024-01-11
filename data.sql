@@ -126,3 +126,6 @@ values (order_id, 2, 2);
 
 //결재된 도서 장바구니 삭제
 DELETE FROM cartItems WHERE id IN (1, 2, 3);
+
+
+SELECT * FROM orders LEFT JOIN delivery ON books.category_id = category.id
