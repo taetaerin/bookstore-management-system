@@ -32,10 +32,10 @@ const order = async (req, res) => {
     let order_id = results.insertId;
 
     //SELECT book_id, quantity FROM catItems WHERE id IN [1, 2, 3];
-    sql = `SELECT book_id, quantity FROM cartItems WHERE id IN (?);`;
+    let sql = `SELECT book_id, quantity FROM cartItems WHERE id IN (?);`;
     let [orderItems, fields] = await conn.query(sql, [items]);
 
-    let values = [];
+    const values = [];
     orderItems.forEach((item) => {
         values.push([order_id, item.book_id, item.quantity]);
     });

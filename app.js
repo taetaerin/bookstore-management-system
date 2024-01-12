@@ -5,9 +5,8 @@ import likeRouter from "./routes/likes.js";
 import orderRouter from "./routes/orders.js";
 import categoryRouter from "./routes/category.js";
 import express from "express";
-import dotenv from "dotenv";
 
-dotenv.config();
+const { PORT } = process.env;
 const app = express();
 
 app.use("/users", userRouter);
@@ -17,4 +16,4 @@ app.use("/likes", likeRouter);
 app.use("/orders", orderRouter);
 app.use("/category", categoryRouter);
 
-app.listen(process.env.PORT);
+app.listen(PORT);

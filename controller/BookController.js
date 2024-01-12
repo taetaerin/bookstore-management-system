@@ -61,5 +61,4 @@ const bookDetail = (req, res) => {
     });
 };
 
-// module.exports = {allBooks, bookDetail};
 export { allBooks, bookDetail };
