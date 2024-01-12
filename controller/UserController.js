@@ -27,7 +27,6 @@ const join = (req, res) => {
 const login = (req, res) => {
     const {email, password} = req.body;
 
-
     let sql = `SELECT * FROM users WHERE email = ?`
     conn.query(sql, email,
         (err, results) => {
@@ -37,11 +36,11 @@ const login = (req, res) => {
             }
 
             const loginUser = results[0];
-            //로그인 시 이메일, 비밀번호 받으면 -> salt값 꺼내서 비밀번호 암호화 하고  -> db에 저장된 비밀번호랑 비교
             const hashPassword =  crypto.pbkdf2Sync(password, loginUser.salt, 10000, 10, 'sha512').toString('base64');
 
             if(loginUser && loginUser.password == hashPassword) {
                 const token = jwt.sign({ 
+                    id: loginUser.id,
                     email: loginUser.email
                 }, process.env.PRIVATE_KEY, {
                     expiresIn: '5m',
@@ -51,8 +50,6 @@ const login = (req, res) => {
                 res.cookie('token', token, {
                     httpOnly: true
                 });
-
-                console.log(token);
 
                 return res.status(StatusCodes.OK).json(results);
             }
