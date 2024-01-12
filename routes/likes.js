@@ -1,10 +1,10 @@
-const express = require('express');
+import express from "express";
+import { addLike, removeLike } from "../controller/LikeController.js";
+
 const router = express.Router();
-const {addLike, removeLike} = require('../controller/LikeController');
+router.use(express.json());
 
-router.use(express.json())
+router.post("/:id", addLike);
+router.delete("/:id", removeLike);
 
-router.post('/:id', addLike);
-router.delete('/:id', removeLike);
-
-module.exports = router;
+export default router;

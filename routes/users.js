@@ -1,17 +1,20 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const jwt = require('jsonwebtoken');
-const conn = require('../mariadb');
-const {StatusCodes} = require('http-status-codes');
-const {join, login, PasswordResetRequest, passwordReset} = require('../controller/UserController');
+import express from "express";
+import {
+    join,
+    login,
+    PasswordResetRequest,
+    passwordReset,
+} from "../controller/UserController.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const router = express.Router();
+router.use(express.json());
 
-router.use(express.json())
+router.post("/join", join);
+router.post("/login", login);
+router.post("/reset", PasswordResetRequest);
+router.put("/reset", passwordReset);
 
-router.post('/join', join);
-router.post('/login', login);
-router.post('/reset', PasswordResetRequest);
-router.put('/reset', passwordReset);
-
-module.exports = router;
+export default router;

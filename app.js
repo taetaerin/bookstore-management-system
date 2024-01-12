@@ -1,24 +1,20 @@
-const express = require('express');
-const dotenv = require('dotenv').config();
+import userRouter from "./routes/users.js";
+import bookRouter from "./routes/books.js";
+import cartRouter from "./routes/carts.js";
+import likeRouter from "./routes/likes.js";
+import orderRouter from "./routes/orders.js";
+import categoryRouter from "./routes/category.js";
+import express from "express";
+import dotenv from "dotenv";
+
+dotenv.config();
 const app = express();
 
-
-const userRouter = require('./routes/users');
-app.use('/users', userRouter);
-
-const bookRouter = require('./routes/books');
-app.use('/books', bookRouter);
-
-const cartRouter = require('./routes/carts');
-app.use('/carts', cartRouter);
-
-const likeRouter = require('./routes/likes');
-app.use('/likes', likeRouter);
-
-const orderRouter = require('./routes/orders');
-app.use('/orders', orderRouter);
-
-const categoryRouter = require('./routes/category');
-app.use('/category', categoryRouter);
+app.use("/users", userRouter);
+app.use("/books", bookRouter);
+app.use("/carts", cartRouter);
+app.use("/likes", likeRouter);
+app.use("/orders", orderRouter);
+app.use("/category", categoryRouter);
 
 app.listen(process.env.PORT);
