@@ -1,9 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import { getCategories } from "../services/CategoryService.js";
+import CategoryService from "../services/CategoryService.js";
 
 const allCategory = async (req, res) => {
     try {
-        const results = await getCategories();
+        const results = await CategoryService.getCategories();
         return res.status(StatusCodes.OK).json(results);
     } catch (err) {
         console.log(err);

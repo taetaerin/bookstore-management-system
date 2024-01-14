@@ -1,11 +1,11 @@
 import { StatusCodes } from "http-status-codes";
-import { getBooks, getBookDetail } from "../services/BookService.js";
+import BookService from "../services/BookService.js";
 
 const allBooks = async (req, res) => {
     let { categoryId, news, limit, currentPage } = req.query;
 
     try {
-        const results = await getBooks(categoryId, news, limit, currentPage);
+        const results = await BookService.getBooks(categoryId, news, limit, currentPage);
         
         if (results.length) {
             return res.status(StatusCodes.OK).json(results);
@@ -23,7 +23,7 @@ const bookDetail = async (req, res) => {
     let { userId } = req.body;
 
     try {
-        const results = await getBookDetail(userId, bookId);
+        const results = await BookService.getBookDetail(userId, bookId);
         
         if (results[0]) {
             return res.status(StatusCodes.OK).json(results[0]);

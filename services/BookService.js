@@ -62,4 +62,4 @@ const getBookDetail = async (userId, bookId) => {
     }
 };
 
-export { getBooks, getBookDetail };
+export default { getBooks, getBookDetail };

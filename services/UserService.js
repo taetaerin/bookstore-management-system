@@ -13,7 +13,7 @@ const createUser = async (email, password) => {
     try {
         const hashedPassword = hashPassword(password);
 
-        const sql = 'INSERT INTO users (email, password) VALUES (?, ?)';
+        const sql = "INSERT INTO users (email, password) VALUES (?, ?)";
         const values = [email, hashedPassword];
         const [results] = await conn.execute(sql, values);
         return results;
@@ -34,10 +34,10 @@ const getUserEmail = async (email) => {
 
     try {
         const sql = `SELECT * FROM users WHERE email = ?`;
-        
-        const [results] = await conn.execute(sql, [email])
+
+        const [results] = await conn.execute(sql, [email]);
         return results;
-    }catch(error) {
+    } catch (error) {
         console.log(error);
         throw error;
     }
@@ -51,10 +51,10 @@ const updateUserPassword = async (email, password) => {
         database: "Library",
         dateStrings: true,
     });
-    
+
     try {
         const hashedPassword = hashPassword(password);
-        const sql = 'UPDATE users SET password=? WHERE email=?';
+        const sql = "UPDATE users SET password=? WHERE email=?";
         const values = [hashedPassword, email];
         const [results] = await conn.execute(sql, values);
         return results;
@@ -64,4 +64,4 @@ const updateUserPassword = async (email, password) => {
     }
 };
 
-export { createUser, getUserEmail, updateUserPassword };
+export default { createUser, getUserEmail, updateUserPassword };

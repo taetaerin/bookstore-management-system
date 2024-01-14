@@ -1,10 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { comparePassword } from "../utils/bcryptUtils.js";
-import {
-    createUser,
-    getUserEmail,
-    updateUserPassword,
-} from "../services/UserService.js";
+import UserService from "../services/UserService.js";
 import dotenv from "dotenv";
 import { generateToken } from "../utils/jwtUtils.js";
 
@@ -14,7 +10,7 @@ const join = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const results = await createUser(email, password);
+        const results = await UserService.createUser(email, password);
         return res.status(StatusCodes.CREATED).json(results);
     } catch (err) {
         console.log(err);
@@ -26,10 +22,9 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const results = await getUserEmail(email);
+        const results = await UserService.getUserEmail(email);
         const loginUser = results[0];
-        const passwordMatch =
-            loginUser && comparePassword(password, loginUser.password);
+        const passwordMatch = loginUser && comparePassword(password, loginUser.password);
 
         if (passwordMatch) {
             const token = generateToken(loginUser);
@@ -50,7 +45,7 @@ const PasswordResetRequest = async (req, res) => {
     const { email } = req.body;
 
     try {
-        const results = await getUserEmail(email);
+        const results = await UserService.getUserEmail(email);
         const user = results[0];
 
         if (user) {
@@ -69,7 +64,7 @@ const PasswordResetRequest = async (req, res) => {
 const passwordReset = (req, res) => {
     const { email, password } = req.body;
     try {
-        const results = updateUserPassword(email, password);
+        const results = UserService.updateUserPassword(email, password);
         if (results.affectedRows == 0) {
             return res.status(StatusCodes.BAD_REQUEST).end();
         } else {
