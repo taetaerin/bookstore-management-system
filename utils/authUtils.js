@@ -12,7 +12,7 @@ const generateToken = (user) => {
         },
         process.env.PRIVATE_KEY,
         {
-            expiresIn: "2m",
+            expiresIn: "1m",
             issuer: "taerin",
         }
     );
