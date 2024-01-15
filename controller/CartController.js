@@ -1,7 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import jwt from "jsonwebtoken";
 import authUtils from "../utils/authUtils.js";
-import conn from "../mariadb.js";
 import CartService from "../services/CartService.js";
 
 const addToCart = async (req, res) => {
