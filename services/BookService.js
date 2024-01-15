@@ -1,6 +1,7 @@
+import { StatusCodes } from "http-status-codes";
 import mariadb from "mysql2/promise";
 
-const getBooks = async (categoryId, news, limit, currentPage) => {
+const getBooks = async (categoryId, news, limit, currentPage, res) => {
     const conn = await mariadb.createConnection({
         host: "localhost",
         user: "root",
@@ -8,6 +9,7 @@ const getBooks = async (categoryId, news, limit, currentPage) => {
         database: "Library",
         dateStrings: true,
     });
+
 
     try {
         let offset = limit * (currentPage - 1);
@@ -33,9 +35,10 @@ const getBooks = async (categoryId, news, limit, currentPage) => {
         console.log(error);
         throw error;
     }
+    
 };
 
-const getBookDetail = async (userId, bookId) => {
+const getBookDetailForLoginUser = async (userId, bookId) => {
     const conn = await mariadb.createConnection({
         host: "localhost",
         user: "root",
@@ -62,4 +65,30 @@ const getBookDetail = async (userId, bookId) => {
     }
 };
 
-export default { getBooks, getBookDetail };
+const getBookDetailForGuestUser = async (bookId) => {
+    const conn = await mariadb.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "root",
+        database: "Library",
+        dateStrings: true,
+    });
+
+    try {
+        const sql = `SELECT *,
+                        (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
+                    FROM books 
+                    LEFT JOIN category 
+                    ON books.category_id = category.category_id  
+                    WHERE books.id=?`;
+        const values = [bookId];
+
+        const [results] = await conn.execute(sql, values);
+        return results;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+export default { getBooks, getBookDetailForLoginUser, getBookDetailForGuestUser };
