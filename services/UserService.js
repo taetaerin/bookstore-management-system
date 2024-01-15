@@ -1,5 +1,5 @@
 import mariadb from "mysql2/promise";
-import { hashPassword } from "../utils/bcryptUtils.js";
+import bcryptUtils from "../utils/bcryptUtils.js";
 
 const createUser = async (email, password) => {
     const conn = await mariadb.createConnection({
@@ -11,7 +11,7 @@ const createUser = async (email, password) => {
     });
 
     try {
-        const hashedPassword = hashPassword(password);
+        const hashedPassword = bcryptUtils.hashPassword(password);
 
         const sql = "INSERT INTO users (email, password) VALUES (?, ?)";
         const values = [email, hashedPassword];
@@ -53,7 +53,7 @@ const updateUserPassword = async (email, password) => {
     });
 
     try {
-        const hashedPassword = hashPassword(password);
+        const hashedPassword = bcryptUtils.hashPassword(password);
         const sql = "UPDATE users SET password=? WHERE email=?";
         const values = [hashedPassword, email];
         const [results] = await conn.execute(sql, values);
