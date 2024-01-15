@@ -31,6 +31,7 @@ const login = async (req, res) => {
         res.cookie("token", token, { httpOnly: true });
         return res.status(StatusCodes.OK).json(loginUser);
     } catch (err) {
+        console.log(err)
         return res.status(StatusCodes.BAD_REQUEST).end();
     }
 };
