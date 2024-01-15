@@ -1,13 +1,11 @@
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import authUtils from "../utils/authUtils.js"
 import conn from "../mariadb.js";
-
-dotenv.config();
 
 const addToCart = (req, res) => {
     const { book_id, quantity } = req.body;
-    let authorization = ensureAuthorization(req, res);
+    let authorization = authUtils.ensureAuthorization(req, res);
 
     if (authorization instanceof jwt.TokenExpiredError) {
         return res.status(StatusCodes.UNAUTHORIZED).json({
@@ -33,7 +31,7 @@ const addToCart = (req, res) => {
 
 const getCartItems = (req, res) => {
     let { selected } = req.body;
-    let authorization = ensureAuthorization(req, res);
+    let authorization = authUtils.ensureAuthorization(req, res);
 
     if (authorization instanceof jwt.TokenExpiredError) {
         return res.status(StatusCodes.UNAUTHORIZED).json({
@@ -47,8 +45,13 @@ const getCartItems = (req, res) => {
         let sql = `SELECT cartItems.id, book_id, title, summary, quantity, price 
                         FROM cartItems LEFT JOIN books 
                         ON books.id = cartItems.book_id
-                        WHERE user_id = ?  AND cartItems.id IN (?);`;
-        let values = [authorization.id, selected];
+                        WHERE user_id = ?`; 
+        let values = [authorization.id];
+        
+        if(selected) {
+            sql +=  ` AND cartItems.id IN (?);`
+            values.push(selected)
+        }
         conn.query(sql, values, (err, results) => {
             if (err) {
                 console.log(err);
@@ -73,17 +76,5 @@ const removeCartItem = (req, res) => {
         return res.status(StatusCodes.OK).json(results);
     });
 };
-
-function ensureAuthorization(req, res) {
-    try {
-        let receivedJwt = req.headers["authorization"];
-        let decodedJWT = jwt.verify(receivedJwt, process.env.PRIVATE_KEY);
-        return decodedJWT;
-    } catch (err) {
-        console.log(err.name);
-        console.log(err.message);
-        return err;
-    }
-}
 
 export { addToCart, getCartItems, removeCartItem };

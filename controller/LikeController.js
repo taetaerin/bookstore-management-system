@@ -1,13 +1,11 @@
 import conn from "../mariadb.js";
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-
-dotenv.config();
+import authUtils from "../utils/authUtils.js"
 
 const addLike = (req, res) => {
     const book_id = req.params.id;
-    let authorization = ensureAuthorization(req, res);
+    let authorization = authUtils.ensureAuthorization(req, res);
 
     if (authorization instanceof jwt.TokenExpiredError) {
         return res.status(StatusCodes.UNAUTHORIZED).json({
@@ -33,7 +31,7 @@ const addLike = (req, res) => {
 
 const removeLike = (req, res) => {
     const book_id = req.params.id;
-    let authorization = ensureAuthorization(req, res);
+    let authorization = authUtils.ensureAuthorization(req, res);
 
     if (authorization instanceof jwt.TokenExpiredError) {
         return res.status(StatusCodes.UNAUTHORIZED).json({
@@ -56,17 +54,5 @@ const removeLike = (req, res) => {
         });
     }
 };
-
-function ensureAuthorization(req, res) {
-    try {
-        let receivedJwt = req.headers["authorization"];
-        let decodedJWT = jwt.verify(receivedJwt, process.env.PRIVATE_KEY);
-        return decodedJWT;
-    } catch (err) {
-        console.log(err.name);
-        console.log(err.message);
-        return err;
-    }
-}
 
 export { addLike, removeLike };

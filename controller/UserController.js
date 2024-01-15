@@ -2,7 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { comparePassword } from "../utils/bcryptUtils.js";
 import UserService from "../services/UserService.js";
 import dotenv from "dotenv";
-import { generateToken } from "../utils/jwtUtils.js";
+import authUtils from "../utils/authUtils.js";
 
 dotenv.config();
 
@@ -27,7 +27,7 @@ const login = async (req, res) => {
         const passwordMatch = loginUser && comparePassword(password, loginUser.password);
 
         if (passwordMatch) {
-            const token = generateToken(loginUser);
+            const token = authUtils.generateToken(loginUser);
 
             res.cookie("token", token, {
                 httpOnly: true,
