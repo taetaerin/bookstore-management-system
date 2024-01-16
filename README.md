@@ -14,7 +14,7 @@
 ![postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=Postman&logoColor=white)
 
 ## API 명세서
-[API 명세서](https://www.notion.so/API-3df453cb3dd64d59a8839a1df73f6dc0?pvs=21)
+[API 명세서](https://www.notion.so/API-3df453cb3dd64d59a8839a1df73f6dc0?pvs=4)
 
 <br>
 
