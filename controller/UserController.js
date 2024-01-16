@@ -7,7 +7,7 @@ const join = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const results = await UserService.createUser(email, password);
+        const results = await UserService.insertUserInfo(email, password);
         return res.status(StatusCodes.CREATED).json(results);
     } catch (err) {
         console.log(err);
@@ -31,7 +31,7 @@ const login = async (req, res) => {
         res.cookie("token", token, { httpOnly: true });
         return res.status(StatusCodes.OK).json(loginUser);
     } catch (err) {
-        console.log(err)
+        console.log(err);
         return res.status(StatusCodes.BAD_REQUEST).end();
     }
 };
@@ -55,8 +55,10 @@ const PasswordResetRequest = async (req, res) => {
 
 const passwordReset = async (req, res) => {
     const { email, password } = req.body;
+
     try {
         const results = await UserService.updateUserPassword(email, password);
+
         if (results.affectedRows == 0) {
             return res.status(StatusCodes.BAD_REQUEST).end();
         } else {

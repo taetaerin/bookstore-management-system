@@ -1,14 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import mariadb from "mysql2/promise";
+import createConnection from "../mariadb.js";
+import camelcaseKeys from "camelcase-keys";
 
 const getBooks = async (categoryId, news, limit, currentPage, res) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         let allBooksRes = {};
@@ -30,25 +25,22 @@ const getBooks = async (categoryId, news, limit, currentPage, res) => {
         sql += ` LIMIT ? OFFSET ?`;
         values.push(parseInt(limit), offset);
 
-        console.log('values', values)
-
         const [booksResults] = await conn.execute(sql, values);
 
-        if(!booksResults.length) {
+        if (!booksResults.length) {
             return res.status(StatusCodes.NOT_FOUND).end();
-        } 
+        }
 
-        allBooksRes.books = booksResults;
+        allBooksRes.books = camelcaseKeys(booksResults);
 
         const [paginationResults] = await conn.execute(`SELECT found_rows()`);
 
         const pagination = {
-            current_page: parseInt(currentPage),
-            total_count: paginationResults[0]["found_rows()"],
+            currentPage: parseInt(currentPage),
+            totalCount: paginationResults[0]["found_rows()"],
         };
 
         allBooksRes.pagination = pagination;
-        console.log('all', allBooksRes)
 
         return allBooksRes;
     } catch (error) {
@@ -58,13 +50,7 @@ const getBooks = async (categoryId, news, limit, currentPage, res) => {
 };
 
 const getBookDetailForLoginUser = async (userId, bookId) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         const sql = `SELECT *,
@@ -77,7 +63,7 @@ const getBookDetailForLoginUser = async (userId, bookId) => {
         const values = [userId, bookId, bookId];
 
         const [results] = await conn.execute(sql, values);
-        return results;
+        return camelcaseKeys(results);
     } catch (error) {
         console.log(error);
         throw error;
@@ -85,17 +71,11 @@ const getBookDetailForLoginUser = async (userId, bookId) => {
 };
 
 const getBookDetailForGuestUser = async (bookId) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         const sql = `SELECT *,
-                        (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
+                        (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes
                     FROM books 
                     LEFT JOIN category 
                     ON books.category_id = category.category_id  
@@ -103,7 +83,7 @@ const getBookDetailForGuestUser = async (bookId) => {
         const values = [bookId];
 
         const [results] = await conn.execute(sql, values);
-        return results;
+        return camelcaseKeys(results);
     } catch (error) {
         console.log(error);
         throw error;

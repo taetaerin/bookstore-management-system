@@ -30,7 +30,7 @@ const order = async (req, res) => {
 
         const orderedBookResults = await OrderService.insertOrderedBookInfo(values);
 
-        let result = await OrderService.deleteCartItems(items);
+        const result = await OrderService.deleteCartItems(items);
         return res.status(StatusCodes.OK).json(result);
     } catch (err) {
         console.log(err);
@@ -44,7 +44,7 @@ const getOrders = async (req, res) => {
     try {
         authUtils.handleAuthError(authorization, res);
 
-        const results = await OrderService.getOrdersInfo();
+        const results = await OrderService.getOrdersInfo(authorization.id);
         return res.status(StatusCodes.OK).json(results);
     } catch (err) {
         console.log(err);
@@ -54,7 +54,6 @@ const getOrders = async (req, res) => {
 
 const getOrderDetail = async (req, res) => {
     const orderId = req.params.id;
-    console.log(orderId)
     const authorization = authUtils.ensureAuthorization(req, res);
 
     try {

@@ -1,13 +1,8 @@
-import mariadb from "mysql2/promise";
+import createConnection from "../mariadb.js";
+import camelcaseKeys from "camelcase-keys";
 
 const insertDeliveryInfo = async (delivery) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         const sql = "INSERT INTO delivery (address, receiver, contact) VALUES (?, ?, ?)";
@@ -21,13 +16,7 @@ const insertDeliveryInfo = async (delivery) => {
 };
 
 const insertOrdersInfo = async (firstBookTitle, totalQuantity, totalPrice, userId, deliveryId) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         const sql =
@@ -42,13 +31,7 @@ const insertOrdersInfo = async (firstBookTitle, totalQuantity, totalPrice, userI
 };
 
 const getOrdersDetailInfo = async (items) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         const sql = "SELECT book_id, quantity FROM cartItems WHERE id IN (?);";
@@ -61,13 +44,7 @@ const getOrdersDetailInfo = async (items) => {
 };
 
 const insertOrderedBookInfo = async (values) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         const sql = "INSERT INTO orderedBook (order_id, book_id, quantity) VALUES ?";
@@ -80,13 +57,7 @@ const insertOrderedBookInfo = async (values) => {
 };
 
 const deleteCartItems = async (items) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         const sql = `DELETE FROM cartItems WHERE id IN (?);`;
@@ -99,23 +70,19 @@ const deleteCartItems = async (items) => {
     }
 };
 
-const getOrdersInfo = async () => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+const getOrdersInfo = async (userId) => {
+    const conn = await createConnection();
 
     try {
         const sql = `SELECT orders.id, created_at, address, receiver, contact, book_title, total_quantity, total_price
                         FROM orders 
                         LEFT JOIN delivery 
-                        ON orders.delivery_id = delivery.id;`;
+                        ON orders.delivery_id = delivery.id
+                        WHERE orders.user_id = ?;
+                    `;
 
-        let [result] = await conn.execute(sql);
-        return result;
+        let [result] = await conn.execute(sql, [userId]);
+        return camelcaseKeys(result);
     } catch (error) {
         console.log(error);
         throw error;
@@ -124,13 +91,7 @@ const getOrdersInfo = async () => {
 
 
 const getOrderedBookDetailInfo = async (orderId) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         const sql = `SELECT book_id, title, author, price, quantity
@@ -140,8 +101,7 @@ const getOrderedBookDetailInfo = async (orderId) => {
                         WHERE order_id = ?`;
 
         const [results] = await conn.execute(sql, [orderId]);
-        console.log(results)
-        return results;
+        return camelcaseKeys(results);
     } catch (error) {
         console.log(error);
         throw error;

@@ -1,18 +1,13 @@
-import mariadb from "mysql2/promise";
+import createConnection from "../mariadb.js";
+import camelcaseKeys from "camelcase-keys";
 
 const getCategories = async () => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         const sql = "SELECT * FROM category";
-        const [rows, fields] = await conn.execute(sql);
-        return rows;
+        const [results] = await conn.execute(sql);
+        return camelcaseKeys(results);
     } catch (error) {
         console.log(error);
         throw error;

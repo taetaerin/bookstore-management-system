@@ -1,15 +1,13 @@
-// const mysql = require('mysql2');
-import mysql from 'mysql2';
+import mariadb from 'mysql2/promise';
 
+const createConnection = async () => {
+    return await mariadb.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'root',
+        database: 'Library',
+        dateStrings: true
+    })
+}
 
-const connection = mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      password: 'root',
-      database: 'Library',
-      dateStrings: true
-    });
-
-
-// module.exports = connection;
-export default connection;
+export default createConnection;

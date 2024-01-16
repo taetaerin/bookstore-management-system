@@ -1,13 +1,7 @@
-import mariadb from "mysql2/promise";
+import createConnection from "../mariadb.js";
 
-const createLike = async (userId, bookId) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+const insertLike = async (userId, bookId) => {
+    const conn = await createConnection();
 
     try {
         const sql = "INSERT INTO likes (user_id, liked_book_id) VALUES (? , ?)";
@@ -20,15 +14,8 @@ const createLike = async (userId, bookId) => {
     }
 };
 
-
 const deleteLike = async (userId, bookId) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         const sql = "DELETE FROM likes WHERE user_id = ? AND liked_book_id = ?;";
@@ -41,4 +28,4 @@ const deleteLike = async (userId, bookId) => {
     }
 };
 
-export default {createLike, deleteLike}
+export default { insertLike, deleteLike };

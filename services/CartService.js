@@ -1,13 +1,8 @@
-import mariadb from "mysql2/promise";
+import camelcaseKeys from "camelcase-keys";
+import createConnection from "../mariadb.js";
 
 const insertCartItem = async (bookId, quantity, userId) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         const sql = "INSERT INTO cartItems (book_id, quantity, user_id) VALUES(?, ?, ?)";
@@ -20,14 +15,8 @@ const insertCartItem = async (bookId, quantity, userId) => {
     }
 };
 
-const fetchCartItems = async (selected, userId) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+const getCartList = async (selected, userId) => {
+    const conn = await createConnection();
 
     try {
         let sql = `SELECT cartItems.id, book_id, title, summary, quantity, price 
@@ -43,22 +32,15 @@ const fetchCartItems = async (selected, userId) => {
         }
 
         const [results] = await conn.query(sql, values);
-        return results;
+        return camelcaseKeys(results);
     } catch (error) {
         console.log(error);
         throw error;
     }
 };
 
-
 const deleteCartItem = async (cartItemId) => {
-    const conn = await mariadb.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "Library",
-        dateStrings: true,
-    });
+    const conn = await createConnection();
 
     try {
         let sql = `DELETE FROM cartItems WHERE id = ?`;
@@ -70,5 +52,4 @@ const deleteCartItem = async (cartItemId) => {
     }
 };
 
-
-export default { insertCartItem, fetchCartItems, deleteCartItem};
+export default { insertCartItem, getCartList, deleteCartItem };

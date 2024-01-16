@@ -24,7 +24,7 @@ const getCartItems = async (req, res) => {
     try {
         authUtils.handleAuthError(authorization, res);
 
-        const results = await CartService.fetchCartItems(selected, authorization.id);
+        const results = await CartService.getCartList(selected, authorization.id);
         return res.status(StatusCodes.OK).json(results);
     } catch (err) {
         console.log(err);
