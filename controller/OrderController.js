@@ -1,10 +1,16 @@
 import { StatusCodes } from "http-status-codes";
 import authUtils from "../utils/authUtils.js";
 import OrderService from "../services/OrderService.js";
+import { validationResult } from "express-validator";
 
 const order = async (req, res) => {
     const authorization = authUtils.ensureAuthorization(req, res);
     const { items, delivery, totalQuantity, totalPrice, firstBookTitle } = req.body;
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).end();
+    }
 
     try {
         authUtils.handleAuthError(authorization, res);

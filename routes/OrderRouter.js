@@ -1,4 +1,5 @@
 import express from "express";
+import { body } from "express-validator";
 import {
     order,
     getOrders,
@@ -8,7 +9,16 @@ import {
 const router = express.Router();
 router.use(express.json());
 
-router.post("/", order);
+router.post(
+    "/", 
+    [
+        body("items").exists().notEmpty(),
+        body("delivery").exists().notEmpty(),
+        body("totalQuantity").exists().notEmpty(),
+        body("totalPrice").exists().notEmpty(),
+        body("firstBookTitle").exists().notEmpty()
+    ]
+    ,order);
 router.get("/", getOrders);
 router.get("/:id", getOrderDetail);
 

@@ -1,9 +1,15 @@
 import { StatusCodes } from "http-status-codes";
 import BookService from "../services/BookService.js";
 import authUtils from "../utils/authUtils.js";
+import { validationResult } from "express-validator";
 
 const allBooks = async (req, res) => {
     const { categoryId, news, limit, currentPage } = req.query;
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).end();
+    }
 
     try {
         const results = await BookService.getBooks(categoryId, news, limit, currentPage, res);
