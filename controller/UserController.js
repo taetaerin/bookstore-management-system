@@ -2,9 +2,15 @@ import { StatusCodes } from "http-status-codes";
 import bcryptUtils from "../utils/bcryptUtils.js";
 import UserService from "../services/UserService.js";
 import authUtils from "../utils/authUtils.js";
+import { validationResult } from "express-validator";
 
 const join = async (req, res) => {
     const { email, password } = req.body;
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).end();
+    }
 
     try {
         const results = await UserService.insertUserInfo(email, password);
@@ -17,6 +23,11 @@ const join = async (req, res) => {
 
 const login = async (req, res) => {
     const { email, password } = req.body;
+    const result = validationResult(req);
+    
+    if (!result.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).end();
+    }
 
     try {
         const [loginUser] = await UserService.getUserEmail(email);
@@ -36,8 +47,13 @@ const login = async (req, res) => {
     }
 };
 
-const PasswordResetRequest = async (req, res) => {
+const passwordResetRequest = async (req, res) => {
     const { email } = req.body;
+    const result = validationResult(req);
+    
+    if (!result.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).end();
+    }
 
     try {
         const [user] = await UserService.getUserEmail(email);
@@ -55,6 +71,11 @@ const PasswordResetRequest = async (req, res) => {
 
 const passwordReset = async (req, res) => {
     const { email, password } = req.body;
+    const result = validationResult(req);
+    
+    if (!result.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).end();
+    }
 
     try {
         const results = await UserService.updateUserPassword(email, password);
@@ -70,4 +91,4 @@ const passwordReset = async (req, res) => {
     }
 };
 
-export { join, login, PasswordResetRequest, passwordReset };
+export { join, login, passwordResetRequest, passwordReset };
