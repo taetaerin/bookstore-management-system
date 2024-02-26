@@ -40,7 +40,7 @@ const login = async (req, res) => {
         const token = authUtils.generateToken(loginUser);
 
         res.cookie("token", token, { httpOnly: true });
-        return res.status(StatusCodes.OK).json(loginUser);
+        return res.status(StatusCodes.OK).json({loginUser, token: token});
     } catch (err) {
         console.log(err);
         return res.status(StatusCodes.BAD_REQUEST).end();
